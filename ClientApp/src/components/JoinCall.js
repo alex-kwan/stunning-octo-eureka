@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { CallClient } from "@azure/communication-calling";
 import { AzureCommunicationTokenCredential } from '@azure/communication-common';
-import { v4 as uuidv4 } from 'uuid';
 
 export class JoinCall extends Component {
   static displayName = JoinCall.name;
@@ -19,45 +18,24 @@ export class JoinCall extends Component {
     this.endCall();
   }
 
-  static renderForecastsTable(forecasts) {
-    return (
-      <table className='table table-striped' aria-labelledby="tabelLabel">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Temp. (C)</th>
-            <th>Temp. (F)</th>
-            <th>Summary</th>
-          </tr>
-        </thead>
-        <tbody>
-          {forecasts.map(forecast =>
-            <tr key={forecast.date}>
-              <td>{forecast.date}</td>
-              <td>{forecast.temperatureC}</td>
-              <td>{forecast.temperatureF}</td>
-              <td>{forecast.summary}</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    );
-  }
-
   render() {
-
     return (
       <div>
       <div>
         some UI to show I have joined a call and the number of participants
         <div>add a user from the server to this call and remove them after 10 seconds</div>
+        <div>The call state is {this.state.callState}</div>
         <button onClick={async () => {
-            console.log('going to add a user to this call with callid '+this.state.id)
+          if(this.state.callState === 'Connected') {
+            var serverCallId = '5013c8f1-fd98-44d9-9f0a-ebbb5790b253';
+            await fetch(`addUser?serverCallId="${serverCallId}"`);
+          }
           } }>add user</button>
           {this.state.remoteParticipants.length > 0 && <div><div>RemoteParticipants</div>
           <div>
-            {this.state.remoteParticipants.map(remoteParticipant => {
-              return <div>{remoteParticipant.id}</div>
+            {this.state.remoteParticipants.map((remoteParticipant, i) => {
+              console.log(remoteParticipant)
+              return <div key={i}>{remoteParticipant.identifier.communicationUserId}</div>
             })}
           </div></div> }
           {this.state.remoteParticipants.length === 0 && <div>No Remote Participants :(</div>}
@@ -76,7 +54,8 @@ export class JoinCall extends Component {
     const data = await response.json();
     console.log(JSON.stringify(data))
 
-    let groupId = uuidv4();
+    // currently hardcoding the group id
+    let groupId = "5013c8f1-fd98-44d9-9f0a-ebbb5790b253";
     console.log('group id = '+groupId)
 
     const callClient = new CallClient(); 
@@ -106,8 +85,6 @@ export class JoinCall extends Component {
           callState: call.state
         })
 
-        console.log('i created the call')
-
         call.on('stateChanged', (event) => {
           console.log('the call state has changed to '+call.state)
           this.setState({
@@ -125,22 +102,16 @@ export class JoinCall extends Component {
           })
         })
         call.on('remoteParticipantsUpdated', (event) => {
-          console.log('remote participants have changed');
+          console.log('remote participants have changed ');
+          
           this.setState({
             id: this.state.id,
-            remoteParticipants: call.remoteParticipants,
+            remoteParticipants: [...call.remoteParticipants],
             callState: this.state.callState
           })
         })
       }))
-
-      console.log('i registered for all events')
-
       callAgent.join({groupId}, { audioOptions: { muted: true}})
-
-      console.log("i joined the call")
-
-      
     } catch(error) {
       console.log(JSON.stringify(error))
       window.alert("Please submit a valid token!");

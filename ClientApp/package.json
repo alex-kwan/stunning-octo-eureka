@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@azure/communication-react": "^1.0.0-beta.4",
     "bootstrap": "^4.1.3",
     "jquery": "^3.6.0",
     "merge": "^1.2.1",

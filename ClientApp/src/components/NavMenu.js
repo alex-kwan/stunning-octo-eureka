@@ -42,6 +42,9 @@ export class NavMenu extends Component {
                 <NavItem>
                   <NavLink tag={Link} className="text-dark" to="/join-call">Join call</NavLink>
                 </NavItem>
+                <NavItem>
+                  <NavLink tag={Link} className="text-dark" to="/accept-call">Accept call</NavLink>
+                </NavItem>
               </ul>
             </Collapse>
           </Container>

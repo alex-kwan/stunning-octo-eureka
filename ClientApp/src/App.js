@@ -5,6 +5,7 @@ import { Home } from './components/Home';
 import { FetchData } from './components/FetchData';
 import { Counter } from './components/Counter';
 import { JoinCall } from './components/JoinCall';
+import { AcceptCall } from './components/AcceptCall';
 
 import './custom.css'
 
@@ -18,6 +19,7 @@ export default class App extends Component {
         <Route path='/counter' component={Counter} />
         <Route path='/fetch-data' component={FetchData} />
         <Route path='/join-call' component={JoinCall} />
+        <Route path='/accept-call' component={AcceptCall} />
       </Layout>
     );
   }

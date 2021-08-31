@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace my_new_app
 {
@@ -45,7 +47,11 @@ namespace my_new_app
             }
 
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions{
+                FileProvider = new PhysicalFileProvider(
+                    Path.Combine(env.ContentRootPath, "MyStaticFiles")),
+                    RequestPath = "/MyStaticFiles"
+            });
             app.UseSpaStaticFiles();
 
             app.UseRouting();
