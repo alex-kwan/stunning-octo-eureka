@@ -26,9 +26,21 @@
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="MyStaticFiles\never6.wav" />
-    <Content Include="MyStaticFiles\test1.wav" />
+    <Content Include="MyStaticFiles\test1.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
+
+    <Target Name="AfterBuild">
+    <!-- Copy linked content files to local folders so that they are available in the debugger. 
+         This is only an issue when running the application locally. The linked files should 
+         be automatically published to the correct folder when publishing to a web server. -->
+    <Copy SourceFiles="%(Content.Identity)"
+          DestinationFiles="%(Content.Link)"
+          SkipUnchangedFiles='true'
+          OverwriteReadOnlyFiles='true'
+          Condition="'%(Content.Link)' != ''" />
+  </Target>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
     <!-- Ensure Node.js is installed -->
@@ -54,6 +66,9 @@
         <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       </ResolvedFileToPublish>
     </ItemGroup>
+  </Target>
+
+  <Target Name="Test1" AfterTargets="Build">
   </Target>
 
 </Project>
